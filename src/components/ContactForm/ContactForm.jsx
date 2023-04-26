@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import { Button, FormStyled, Input } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import Notiflix from 'notiflix';
-import { getContacts } from 'redux/selectors';
+import { selectContacts } from 'redux/selectors';
 import { addContact } from 'redux/operation';
 import { nanoid } from '@reduxjs/toolkit';
 
@@ -12,17 +12,19 @@ const inithialValue = {
 };
 
 const ContactForm = () => {
-  const contactList = useSelector(getContacts);
+  const contactList = useSelector(selectContacts);
 
   const dispatch = useDispatch();
 
   const handleSubmit = (value, { resetForm }) => {
     const existingContact = contactList.some(
-      contact => contact.name === value.name
+      contact => contact.phone === value.phone
     );
 
     if (existingContact) {
-      Notiflix.Notify.failure(`${value.name} is already in contacts`);
+      Notiflix.Notify.failure(
+        `Сontact with number ${value.phone} is already in contacts`
+      );
     } else {
       dispatch(addContact({ ...value, id: nanoid() }));
       Notiflix.Notify.success('Add contacts');

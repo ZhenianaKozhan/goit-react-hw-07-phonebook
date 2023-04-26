@@ -1,34 +1,24 @@
 import Filter from 'components/Filter/Filter';
 import ContactItem from './ContactItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import {
-  getContacts,
-  getError,
-  getFilter,
-  getIsLoading,
+  selectError,
+  selectIsLoading,
+  selectVisibleContacts,
 } from 'redux/selectors';
 import { fetchContacts } from 'redux/operation';
 
 const ContactList = () => {
-  const contactList = useSelector(getContacts);
-  const isLoading = useSelector(getIsLoading);
-  const error = useSelector(getError);
-  const filter = useSelector(getFilter);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+  const visibleContacts = useSelector(selectVisibleContacts);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
-
-  const visibleContacts = useMemo(
-    () =>
-      contactList.filter(contact =>
-        contact.name.toLowerCase().includes(filter.toLowerCase())
-      ),
-    [contactList, filter]
-  );
 
   return (
     <ul>
