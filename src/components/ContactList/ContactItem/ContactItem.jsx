@@ -2,19 +2,21 @@ import { Button } from 'components/ContactForm/ContactForm.styled';
 import PropTypes from 'prop-types';
 import { Contact } from './ContactItem.styled';
 import { useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
 import Notiflix from 'notiflix';
+import { deleteContact } from 'redux/operation';
 
-const ContactItem = ({ id, name, number }) => {
+const ContactItem = ({ id, name, phone }) => {
   const dispatch = useDispatch();
-  const removeContact = () => {
+
+  const handleDelete = () => {
     dispatch(deleteContact(id));
     Notiflix.Notify.success(`Contact ${name} delete`);
   };
+
   return (
     <Contact id={id}>
-      {name}: {number}{' '}
-      <Button type="button" onClick={removeContact}>
+      {name}: {phone}{' '}
+      <Button type="button" onClick={handleDelete}>
         Delete
       </Button>
     </Contact>
@@ -24,7 +26,7 @@ const ContactItem = ({ id, name, number }) => {
 ContactItem.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
 };
 
 export default ContactItem;

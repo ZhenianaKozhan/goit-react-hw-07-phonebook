@@ -1,34 +1,38 @@
 import { Formik } from 'formik';
 import { Button, FormStyled, Input } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
 import Notiflix from 'notiflix';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/operation';
+import { nanoid } from '@reduxjs/toolkit';
 
 const inithialValue = {
   name: '',
-  number: '',
+  phone: '',
 };
 
 const ContactForm = () => {
-  const contacts = useSelector(state => state.contacts);
+  const contactList = useSelector(getContacts);
 
   const dispatch = useDispatch();
 
-  const creatContact = (value, { resetForm }) => {
-    const existingContact = contacts.some(
+  const handleSubmit = (value, { resetForm }) => {
+    const existingContact = contactList.some(
       contact => contact.name === value.name
     );
+
     if (existingContact) {
       Notiflix.Notify.failure(`${value.name} is already in contacts`);
     } else {
-      dispatch(addContact(value));
+      dispatch(addContact({ ...value, id: nanoid() }));
       Notiflix.Notify.success('Add contacts');
     }
 
     resetForm();
   };
+
   return (
-    <Formik initialValues={inithialValue} onSubmit={creatContact}>
+    <Formik initialValues={inithialValue} onSubmit={handleSubmit}>
       <FormStyled>
         <label htmlFor="name">Name</label>
         <Input
@@ -41,7 +45,7 @@ const ContactForm = () => {
         <label htmlFor="number">Number</label>
         <Input
           type="tel"
-          name="number"
+          name="phone"
           // pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           // title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
